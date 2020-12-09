@@ -16,7 +16,7 @@
       <el-form :model="dataForm" :rules="dataRule" ref="dataForm"  autocomplete="on" label-position="left">
 
         <el-form-item  prop="username">
-          <span slot="label">{{$t('login.   ')}}</span>
+          <span slot="label">{{$t('login.username')}}</span>
           <el-input v-model="dataForm.username" placeholder="注册账号"></el-input>
         </el-form-item>
         <el-form-item  prop="password" :class="{ 'is-required': !dataForm.id }">
@@ -116,7 +116,7 @@ export default {
       visible: false,
       captchaPath: null,
       //baseUrl:'http://172.19.4.221:8080/auth',
-      baseUrl:'http://172.16.2.39:8080/auth',
+      baseUrl:'http://172.16.2.37:8080/auth',
       loading: false,
         roleList: [{roleId:2, roleName:'普通用户'}],
         dataForm: {

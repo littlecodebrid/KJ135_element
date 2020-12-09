@@ -88,7 +88,7 @@
          <!-- <a href="/#/register" class="zadmin-left" style="width: 50%; float: left">还没有账号？去注册</a>
           <a href="user/editPwd" class="zadmin-right-forget" style="width: 50%; float: right; padding-left: 30%">忘记密码</a>-->
           <a href="/#/register" class="zadmin-left" style="width: 50%; float: left">{{$t('login.register')}}</a>
-          <a href="user/editPwd" class="zadmin-right-forget" style="width: 60%; float: right; padding-left: 30%">{{$t('login.forget')}}</a>
+          <a href="/#/forget" class="zadmin-right-forget" style="width: 60%; float: right; padding-left: 30%">{{$t('login.forget')}}</a>
         </el-row>
 
       </el-form>
@@ -140,8 +140,8 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {},
-      baseUrl:'http://192.168.0.18:8080/auth'
+      otherQuery: {}/*,
+      baseUrl:'http://192.168.0.18:8080/auth'*/
     }
   },
   watch: {
@@ -157,13 +157,13 @@ export default {
     }
   },
   created() {
-    var _self = this;
+ /*   var _self = this;
     document.onkeydown = function(e) {
       var key = window.event.keyCode;
       if (key == 13 || key == 100) {
         _self.submitForm("ruleForm");
       }
-    };
+    };*/
      //window.addEventListener('storage', this.afterQRScan)
     // sessionStorage.setItem('locale','zh')
   },
@@ -189,7 +189,7 @@ export default {
     getCaptcha () {
       this.loginForm.uuid = getUUID()
       this.captchaPath = this.$http.adornUrl(`/captcha.jpg?uuid=${this.loginForm.uuid}`)
-      console.log('ymcaptcha', this.captchaPath)
+     // console.log('ymcaptcha', this.captchaPath)
     },
 
     checkCapslock(e) {
@@ -250,17 +250,18 @@ export default {
       let toUrl
       if(currentUrl.indexOf('redirect') !== -1) {
         toUrl = currentUrl.match(/redirect=(\S*)/)[1]
+        console.log("cuuuent:"+window.location.href)
+        console.log("toUrl"+toUrl)
         toUrl = decodeURIComponent(toUrl)
         if(toUrl.indexOf('http') !== -1) {
           window.location.href = toUrl
-
+          console.log("toUrl1111"+toUrl)
         } else {
           this.$router.push({path: toUrl})
         }
       } else {
         this.$router.push({path: '/home'})
       }
-
       console.log('this.$router :', this.$router)
     },
 
