@@ -81,7 +81,7 @@
 
         </el-form-item>
 
-        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="login">登录</el-button>
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="login" native-type="submit">登录</el-button>
         <hr style="margin-bottom: 10px;"/>
 
         <el-row type="flex">
@@ -104,7 +104,7 @@ import SocialSign from './components/SocialSignin'
 import ApiClient from '../../api/ApiClient'
 import { getUUID } from '../../utils/validate'
 import { setToken } from '../../utils/auth'
-
+import Cookies from 'js-cookie'
 export default {
    name: 'Login',
   components: { SocialSign },
@@ -169,8 +169,10 @@ export default {
   },
   updated(){
     if(sessionStorage.getItem('locale')=='en'){
+      console.log(sessionStorage.getItem('local'));
       this.switchValue=false
     }else {
+      console.log(sessionStorage.getItem('local'));
       this.switchValue=true
     }
   },
@@ -236,6 +238,7 @@ export default {
             if (data && data.code === 0) {
               this.$store.commit('SET_TOKEN', data.token)
               setToken(data.token)
+              Cookies.set('languageKey', this.switchValue)
               this.goToRedirect()
             } else {
               this.getCaptcha()
@@ -258,7 +261,7 @@ export default {
           console.log("toUrl1111"+toUrl)
         } else {
           this.$router.push({path: toUrl})
-        }
+      }
       } else {
         this.$router.push({path: '/home'})
       }
