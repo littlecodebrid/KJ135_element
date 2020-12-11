@@ -253,12 +253,9 @@ export default {
       let toUrl
       if(currentUrl.indexOf('redirect') !== -1) {
         toUrl = currentUrl.match(/redirect=(\S*)/)[1]
-        console.log("cuuuent:"+window.location.href)
-        console.log("toUrl"+toUrl)
         toUrl = decodeURIComponent(toUrl)
         if(toUrl.indexOf('http') !== -1) {
           window.location.href = toUrl
-          console.log("toUrl1111"+toUrl)
         } else {
           this.$router.push({path: toUrl})
       }
