@@ -116,7 +116,7 @@ export default {
       visible: false,
       captchaPath: null,
       //baseUrl:'http://172.19.4.221:8080/auth',
-      baseUrl:'http://172.16.2.37:8888/auth',
+      baseUrl:'http://172.16.2.47:8888/auth',
       loading: false,
         roleList: [{roleId:2, roleName:'普通用户'}],
         dataForm: {
