@@ -5,25 +5,27 @@
     <el-scrollbar style='height:100%'>
     <div class="login-wrapper"></div>
     <div class="title-container">
-      <h3 class="title" style="color:#eee">数据管理分系统</h3>
+      <h3 class="title" style="color:#eee">{{$t('login.title')}}</h3>
     </div>
 
     <el-card class="card-box">
       <div class="title-container">
-        <h3 class="title" style="color:#1890ff">重置密码</h3>
+        <h3 class="title" style="color:#1890ff">{{$t('forget.reset')}}</h3>
       </div>
 
       <el-form :model="dataForm" :rules="dataRule" ref="dataForm"  autocomplete="on" label-position="left">
 
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="dataForm.username" placeholder="用户名"></el-input>
+        <el-form-item prop="username">
+          <span slot="label">{{$t('login.username')}}</span>
+          <el-input v-model="dataForm.username" :placeholder="$t('login.username')"></el-input>
         </el-form-item>
 
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
+        <el-form-item  prop="email">
+          <span slot="label">{{$t('register.email')}}</span>
+          <el-input v-model="dataForm.email" :placeholder="$t('register.email')"></el-input>
         </el-form-item>
 
-        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="confirm">确认</el-button>
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="confirm">{{$t('forget.confrim')}}</el-button>
         <hr style="margin-bottom: 10px;"/>
       </el-form>
     </el-card>
@@ -44,7 +46,7 @@ export default {
   data () {
     var validateEmail = (rule, value, callback) => {
       if (!isEmail(value)) {
-        callback(new Error('邮箱格式错误'))
+        callback(new Error(this.$t('backstage.06012')))
       } else {
         callback()
       }
@@ -62,10 +64,10 @@ export default {
       },
       dataRule: {
         username: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' }
+          { required: true, message: this.$t('forget.isUser'), trigger: 'blur' }
         ],
           email: [
-          { required: true, message: '邮箱不能为空', trigger: 'blur' },
+          { required: true, message: this.$t('forget.isEmail'), trigger: 'blur' },
           { validator: validateEmail, trigger: 'blur' }
         ],
       }
@@ -92,8 +94,6 @@ export default {
       } else {
         this.$router.push({path: '/home'})
       }
-
-      console.log('this.$router :', this.$router)
     },
     confirm() {
       this.$refs['dataForm'].validate((valid) => {
@@ -103,15 +103,14 @@ export default {
             method: 'post',
             data: this.$http.adornData(this.dataForm)
           }).then(({data}) => {
-            console.log("data:"+data.code)
             if (data && data.code === 0) {
             /*  this.$store.commit('SET_TOKEN', data.token)
               setToken(data.token)
               */
-              this.$message.info(data.msg);
+              this.$message.info(this.$t(data.msg));
               this.goToRedirect()
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(this.$t(data.msg))
             }
           })
         }

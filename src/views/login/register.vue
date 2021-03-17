@@ -17,23 +17,23 @@
 
         <el-form-item  prop="username">
           <span slot="label">{{$t('login.username')}}</span>
-          <el-input v-model="dataForm.username" placeholder="注册账号"></el-input>
+          <el-input v-model="dataForm.username" :placeholder="$t('login.username')"></el-input>
         </el-form-item>
         <el-form-item  prop="password" :class="{ 'is-required': !dataForm.id }">
           <span slot="label">{{$t('login.password')}}</span>
-          <el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
+          <el-input v-model="dataForm.password" type="password" :placeholder="$t('login.password')"></el-input>
         </el-form-item>
         <el-form-item  prop="comfirmPassword" :class="{ 'is-required': !dataForm.id }">
           <span slot="label">{{$t('register.confirm')}}</span>
-          <el-input v-model="dataForm.comfirmPassword" type="password" placeholder="确认密码"></el-input>
+          <el-input v-model="dataForm.comfirmPassword" type="password" :placeholder="$t('register.confirm')"></el-input>
         </el-form-item>
         <el-form-item prop="email">
           <span slot="label">{{$t('register.email')}}</span>
-          <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
+          <el-input v-model="dataForm.email" :placeholder="$t('register.email')"></el-input>
         </el-form-item>
         <el-form-item prop="mobile">
           <span slot="label">{{$t('register.mobile')}}</span>
-          <el-input v-model="dataForm.mobile" oninput="if(value.length > 11)value = value.slice(0, 11)" placeholder="手机号" ></el-input>
+          <el-input v-model="dataForm.mobile" oninput="if(value.length > 11)value = value.slice(0, 11)" :placeholder="$t('register.mobile')" ></el-input>
         </el-form-item>
        <!-- <el-form-item label="角色" size="mini" prop="roleIdList">
           <el-checkbox-group v-model="dataForm.roleIdList">
@@ -45,7 +45,7 @@
           <el-input style="width: 50%"
                     ref="username"
                     v-model="dataForm.captcha"
-                    placeholder="验证码"
+                    :placeholder="$t('login.code')"
                     name="capatch"
                     type="text"
                     tabindex="3"
@@ -77,37 +77,37 @@ export default {
   data () {
     var validateUser = (rule, value, callback) => {
       if (value==null) {
-        callback(new Error('用户名不能为空'))
+        callback(new Error(this.$t('forget.isUser')))
       } else {
         callback()
       }
     }
     var validatePassword = (rule, value, callback) => {
       if (!this.dataForm.id && !/\S/.test(value)) {
-        callback(new Error('密码不能为空'))
+        callback(new Error(this.$t('register.isPass')))
       } else {
         callback()
       }
     }
     var validateComfirmPassword = (rule, value, callback) => {
       if (!this.dataForm.id && !/\S/.test(value)) {
-        callback(new Error('确认密码不能为空'))
+        callback(new Error(this.$t('register.isConfrim')))
       } else if (this.dataForm.password !== value) {
-        callback(new Error('确认密码与密码输入不一致'))
+        callback(new Error(this.$t('register.checkPass')))
       } else {
         callback()
       }
     }
     var validateEmail = (rule, value, callback) => {
       if (!isEmail(value)) {
-        callback(new Error('邮箱格式错误'))
+        callback(new Error(this.$t('backstage.06012')))
       } else {
         callback()
       }
     }
     var validateMobile = (rule, value, callback) => {
       if (!isMobile(value)) {
-        callback(new Error('手机号格式错误'))
+        callback(new Error(this.$t('register.isPhone')))
       } else {
         callback()
       }
@@ -116,7 +116,7 @@ export default {
       visible: false,
       captchaPath: null,
       //baseUrl:'http://172.19.4.221:8080/auth',
-      baseUrl:'http://172.16.2.47:8888/auth',
+      baseUrl:'http://172.16.2.41:8888/auth',
       loading: false,
         roleList: [{roleId:2, roleName:'普通用户'}],
         dataForm: {
@@ -132,7 +132,7 @@ export default {
       },
       dataRule: {
         username: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' }
+          { required: true, message: this.$t('forget.isUser'), trigger: 'blur' }
         ],
           password: [
           { validator: validatePassword, trigger: 'blur' }
@@ -141,15 +141,15 @@ export default {
           { validator: validateComfirmPassword, trigger: 'blur' }
         ],
           email: [
-          { required: true, message: '邮箱不能为空', trigger: 'blur' },
+          { required: true, message: this.$t('forget.isEmail'), trigger: 'blur' },
           { validator: validateEmail, trigger: 'blur' }
         ],
           mobile: [
-          { required: true, message: '手机号不能为空', trigger: 'blur' },
+          { required: true, message: this.$t('forget.checkPhone'), trigger: 'blur' },
           { validator: validateMobile, trigger: 'blur' }
         ],
         captcha: [
-          { required: true, message: '验证码不能为空', trigger: 'blur' }]
+          { required: true, message: this.$t('register.checkcaptcha'), trigger: 'blur' }]
       }
     }
   },
@@ -185,8 +185,6 @@ export default {
       } else {
         this.$router.push({path: '/home'})
       }
-
-      console.log('this.$router :', this.$router)
     },
     register() {
       this.$refs['dataForm'].validate((valid) => {
@@ -201,11 +199,11 @@ export default {
             /*  this.$store.commit('SET_TOKEN', data.token)
               setToken(data.token)
               */
-              this.$message.info(data.msg);
+              this.$message.info(this.$t(data.msg));
               this.goToRedirect()
             } else {
               this.getCaptcha()
-              this.$message.error(data.msg)
+              this.$message.error(this.$t(data.msg))
             }
           })
         }

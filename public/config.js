@@ -4,6 +4,6 @@ const globalConfig = {
 	monitorBaseUrl: "http://127.0.0.1:18886",
 	requestTimeout: 60000,
   //baseUrl: "http://172.19.4.221:8080/auth"
-  baseUrl: "http://172.16.2.47:8888/auth",
+  baseUrl: "http://172.16.2.41:8888/auth",
 }
 export default globalConfig

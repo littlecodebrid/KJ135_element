@@ -63,25 +63,35 @@
             </span>
           </el-form-item>
         </el-tooltip>
-
+        <!--短信验证码-->
+        <el-form-item prop="verifyCode" :label="$t('login.verifyCode')" >
+          <el-input style="width: 70%"
+                    ref="verifyCode"
+                    v-model="loginForm.verifyCode"
+                    :placeholder="$t('login.verifyCode')"
+                    name="verifyCode"
+                    type="text"
+                    tabindex="3"
+                    autocomplete="false"
+          />
+          <el-button type="button" @click="sendcode" :disabled="disabled" style="padding-right: auto" v-if="disabled==false" > {{ $t('login.sendCode') }}</el-button>
+          <el-button type="button" @click="sendcode" :disabled="disabled" style="padding-right: auto" v-if="disabled==true">{{btntxt}} </el-button>
+        </el-form-item>
         <!--<el-form-item prop="capatch" label="验证码" >-->
         <el-form-item prop="capatch" :label="$t('login.code')" >
           <el-input style="width: 50%"
             ref="username"
             v-model="loginForm.captcha"
-            placeholder="验证码"
+            :placeholder="$t('login.code')"
             name="capatch"
             type="text"
             tabindex="3"
             autocomplete="false"
           />
           <img class="login-captcha"  style="width:50%;border: solid #0a76a4 1px" :src="captchaPath" @click="getCaptcha()" alt="">
-
-
-
         </el-form-item>
 
-        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="login" native-type="submit">登录</el-button>
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="login" native-type="submit">{{$t('login.login')}}</el-button>
         <hr style="margin-bottom: 10px;"/>
 
         <el-row type="flex">
@@ -101,7 +111,6 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
-import ApiClient from '../../api/ApiClient'
 import { getUUID } from '../../utils/validate'
 import { setToken } from '../../utils/auth'
 import Cookies from 'js-cookie'
@@ -132,7 +141,7 @@ export default {
       loginRules: {
         // username: [{ required: true, trigger: 'blur', validator: validateUsername }],
          //password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        captcha: [{ required: true, trigger: 'blur', message: "验证码不能为空" }]
+        captcha: [{ required: true, trigger: 'blur', message: this.$t('register.checkcaptcha') }]
       },
       captchaPath: null,
       passwordType: 'password',
@@ -140,6 +149,9 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
+      disabled: false,
+      time: 0,
+      btntxt: this.$t('login.reSend'),
       otherQuery: {}/*,
       baseUrl:'http://192.168.0.18:8080/auth'*/
     }
@@ -156,23 +168,10 @@ export default {
       immediate: true
     }
   },
-  created() {
- /*   var _self = this;
-    document.onkeydown = function(e) {
-      var key = window.event.keyCode;
-      if (key == 13 || key == 100) {
-        _self.submitForm("ruleForm");
-      }
-    };*/
-     //window.addEventListener('storage', this.afterQRScan)
-    // sessionStorage.setItem('locale','zh')
-  },
   updated(){
     if(sessionStorage.getItem('locale')=='en'){
-      console.log(sessionStorage.getItem('local'));
       this.switchValue=false
     }else {
-      console.log(sessionStorage.getItem('local'));
       this.switchValue=true
     }
   },
@@ -193,7 +192,35 @@ export default {
       this.captchaPath = this.$http.adornUrl(`/captcha.jpg?uuid=${this.loginForm.uuid}`)
      // console.log('ymcaptcha', this.captchaPath)
     },
-
+    sendcode() {
+      /*  this.$message({
+         /!* message: '发送成功',*!/
+          type: 'success',
+          center:true
+        });*/
+        this.time = 60;
+        this.disabled = true;
+        this.timer();
+      this.$http({
+        url: this.$http.adornUrl('/sys/sendCode'),
+        method: 'post',
+        data: this.$http.adornData(this.loginForm)
+      }).then(({data}) => {
+        this.$message.info(this.$t(data.msg))
+      })
+    },
+    //60S倒计时
+    timer() {
+      if (this.time > 0) {
+        this.time--;
+        this.btntxt = this.time + "s后，"+this.$t('login.reSend');
+        setTimeout(this.timer, 1000);
+      } else {
+        this.time = 0;
+        this.btntxt = this.$t('login.sendCode');
+        this.disabled = false;
+      }
+    },
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
@@ -242,7 +269,7 @@ export default {
               this.goToRedirect()
             } else {
               this.getCaptcha()
-              this.$message.error(data.msg)
+              this.$message.error(this.$t(data.msg))
             }
           })
         }
@@ -262,9 +289,7 @@ export default {
       } else {
         this.$router.push({path: '/home'})
       }
-      console.log('this.$router :', this.$router)
     },
-
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
@@ -278,29 +303,10 @@ export default {
           sessionStorage.setItem('locale','cn')
           this.$i18n.locale=sessionStorage.getItem('locale')
         }else {
-          // this.$i18n.locale="en"
           sessionStorage.setItem('locale','en')
           this.$i18n.locale=sessionStorage.getItem('locale')
         }
-    }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
+    },
   }
 }
 </script>
