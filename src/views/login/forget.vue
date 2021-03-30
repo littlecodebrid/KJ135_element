@@ -3,9 +3,9 @@
 
   <div class="login-container" style="height:1000px;">
     <el-scrollbar style='height:100%'>
-    <div class="login-wrapper"></div>
+  <!--  <div class="login-wrapper"></div>-->
     <div class="title-container">
-      <h3 class="title" style="color:#eee">{{$t('login.title')}}</h3>
+      <h3 class="title" style="color:#1890ff">{{$t("login.title")}}</h3>
     </div>
 
     <el-card class="card-box">
@@ -155,7 +155,9 @@ export default {
     margin-right: auto;
     min-height: 100%;
     width: 100%;
-    background-color: $bg;
+  /*  background-color: $bg;*/
+    background-image: url(~@/assets/img/login_bg1.png);
+    background-size:100%;
     overflow: hidden;
     z-index: 2;
     position: relative;
