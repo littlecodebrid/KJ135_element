@@ -1,7 +1,7 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN' //引入element语言包
 const cn = {
   login: {
-   'title':'数据管理分系统',
+   'title':'数据存储与管理分系统',
     'about':'用户登录界面',
     'username':'用户名',
     'password':'密码',
