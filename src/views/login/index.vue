@@ -61,22 +61,6 @@
               <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
             </span>
           </el-form-item>
-     <!--   </el-tooltip>-->
-        <!--短信验证码-->
-        <el-form-item prop="verifyCode" :label="$t('login.verifyCode')" >
-          <el-input style="width: 70%"
-                    ref="verifyCode"
-                    v-model="loginForm.verifyCode"
-                    :placeholder="$t('login.verifyCode')"
-                    name="verifyCode"
-                    type="text"
-                    tabindex="3"
-                    autocomplete="false"
-          />
-          <el-button type="button" @click="sendcode" :disabled="disabled" style="padding-right: auto" v-if="disabled==false" > {{ $t('login.sendCode') }}</el-button>
-          <el-button type="button" @click="sendcode" :disabled="disabled" style="padding-right: auto" v-if="disabled==true">{{btntxt}} </el-button>
-        </el-form-item>
-        <!--<el-form-item prop="capatch" label="验证码" >-->
         <el-form-item prop="capatch" :label="$t('login.code')" >
           <el-input style="width: 50%"
                     ref="username"
@@ -89,6 +73,23 @@
           />
           <img class="login-captcha"  style="width:50%;border: solid #0a76a4 1px" :src="captchaPath" @click="getCaptcha()" alt="">
         </el-form-item>
+     <!--   </el-tooltip>-->
+        <!--短信验证码-->
+        <el-form-item prop="verifyCode" :label="$t('login.verifyCode')" >
+          <el-input style="width: 70%"
+                    ref="verifyCode"
+                    v-model="loginForm.verifyCode"
+                    :placeholder="$t('login.verifyCode')"
+                    name="verifyCode"
+                    type="text"
+                    tabindex="3"
+                    autocomplete="false"
+          />
+          <el-button type="button" @click="sendcode(loginForm.captcha)" :disabled="disabled" style="padding-right: auto" v-if="disabled==false" > {{ $t('login.sendCode') }}</el-button>
+          <el-button type="button" @click="sendcode(loginForm.captcha)" :disabled="disabled" style="padding-right: auto" v-if="disabled==true">{{btntxt}} </el-button>
+        </el-form-item>
+        <!--<el-form-item prop="capatch" label="验证码" >-->
+
 
         <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:10px;" @click.native.prevent="login" native-type="submit">{{$t('login.login')}}</el-button>
         <hr style="margin-bottom: 10px;"/>
@@ -191,22 +192,30 @@
         this.captchaPath = this.$http.adornUrl(`/captcha.jpg?uuid=${this.loginForm.uuid}`)
         // console.log('ymcaptcha', this.captchaPath)
       },
-      sendcode() {
-        /*  this.$message({
-           /!* message: '发送成功',*!/
-            type: 'success',
-            center:true
-          });*/
-        this.time = 60;
-        this.disabled = true;
-        this.timer();
-        this.$http({
-          url: this.$http.adornUrl('/sys/sendCode'),
-          method: 'post',
-          data: this.$http.adornData(this.loginForm)
-        }).then(({data}) => {
-          this.$message.info(this.$t(data.msg))
-        })
+      sendcode(captcha) {
+        if(captcha==undefined){
+          this.$message.error('请输入验证码')
+        }else {
+          console.log(captcha+"测试")
+          if (captcha.length==5) {
+            this.$refs['loginForm'].validate((valid) => {
+              if (valid) {
+                this.time = 60;
+                this.disabled = true;
+                this.timer();
+                this.$http({
+                  url: this.$http.adornUrl('/sys/sendCode'),
+                  method: 'post',
+                  data: this.$http.adornData(this.loginForm)
+                }).then(({data}) => {
+                  this.$message.info(this.$t(data.msg))
+                })
+              } else {
+                return false
+              }
+            })
+            }
+          }
       },
       //60S倒计时
       timer() {

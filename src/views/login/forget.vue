@@ -133,7 +133,7 @@ export default {
     z-index: 100 !important;
     position: absolute;
     left: calc(50% - 250px);
-
+    background:hsla(0,0%,100%,.3);
   }
 
 
